@@ -10,7 +10,30 @@ function App() {
   const [imgSrc, setImgSrc] = useState(null);
   const [textOcr, setTextOcr] = useState(null);
   const [load, setLoad] = useState(false);
-  let fileInputRef = createRef();
+  const [reading, setReading] = useState(false); // State to track reading status
+  const [utterance, setUtterance] = useState(null); // State to hold the speech utterance
+  const fileInputRef = createRef();
+
+  // Function to start reading the text
+  const startReading = () => {
+    if (utterance) {
+      // If utterance exists (paused previously), resume from where it left off
+      window.speechSynthesis.resume(utterance);
+    } else {
+      const speech = new SpeechSynthesisUtterance(textOcr);
+      window.speechSynthesis.speak(speech);
+      setUtterance(speech);
+    }
+    setReading(true);
+  };
+
+  // Function to pause reading the text
+  const pauseReading = () => {
+    if (utterance) {
+      window.speechSynthesis.pause(utterance);
+    }
+    setReading(false);
+  };
 
   const capture = useCallback(() => {
     setLoad(true);
@@ -83,6 +106,7 @@ function App() {
                   />
                 </form>
               </Button>
+              
             </Grid.Column>
           </center>
         </Grid.Column>
@@ -108,6 +132,19 @@ function App() {
                       content=""
                       style={{ margin: 15 }}
                     />
+                    {/* Button for reading the entire text */}
+                    <Button
+                      size='big'
+                      onClick={reading ? pauseReading : startReading}
+                      icon
+                      labelPosition='left'
+                      inverted
+                      color={reading ? 'red' : 'green'}
+                      style={{ margin: 20 }}
+                    >
+                      <Icon name={reading ? 'pause' : 'play'} />
+                      {reading ? 'Pause Reading' : 'Start Reading'}
+                    </Button>
                   </>
                   :
                   <Header style={{ margin: 10, fontFamily: 'roboto' }} size='large'>
