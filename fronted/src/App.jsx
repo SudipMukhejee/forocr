@@ -5,34 +5,28 @@ import axios from 'axios';
 import { Header, Grid, Button, Icon, Message, Loader } from 'semantic-ui-react';
 
 function App() {
-
   const webcamRef = useRef(null);
   const [imgSrc, setImgSrc] = useState(null);
   const [textOcr, setTextOcr] = useState(null);
   const [load, setLoad] = useState(false);
-  const [reading, setReading] = useState(false); // State to track reading status
-  const [utterance, setUtterance] = useState(null); // State to hold the speech utterance
-  const fileInputRef = createRef();
+  let fileInputRef = createRef();
 
-  // Function to start reading the text
-  const startReading = () => {
-    if (utterance) {
-      // If utterance exists (paused previously), resume from where it left off
-      window.speechSynthesis.resume(utterance);
-    } else {
-      const speech = new SpeechSynthesisUtterance(textOcr);
-      window.speechSynthesis.speak(speech);
-      setUtterance(speech);
-    }
-    setReading(true);
+  // Function to handle speech synthesis
+  const speak = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'en-US';
+    speechSynthesis.cancel();
+    speechSynthesis.speak(utterance);
   };
 
-  // Function to pause reading the text
-  const pauseReading = () => {
-    if (utterance) {
-      window.speechSynthesis.pause(utterance);
-    }
-    setReading(false);
+  // Function to handle pausing speech synthesis
+  const pauseSpeech = () => {
+    speechSynthesis.pause();
+  };
+
+  // Function to handle resuming speech synthesis
+  const resumeSpeech = () => {
+    speechSynthesis.resume();
   };
 
   const capture = useCallback(() => {
@@ -106,7 +100,13 @@ function App() {
                   />
                 </form>
               </Button>
-              
+
+              {/* Integration of speech synthesis buttons */}
+              <div style={{ marginTop: 20 }}>
+                <Button onClick={() => speak(textOcr)}>Play</Button>
+                <Button onClick={pauseSpeech}>Pause</Button>
+                <Button onClick={resumeSpeech}>Resume</Button>
+              </div>
             </Grid.Column>
           </center>
         </Grid.Column>
@@ -132,19 +132,6 @@ function App() {
                       content=""
                       style={{ margin: 15 }}
                     />
-                    {/* Button for reading the entire text */}
-                    <Button
-                      size='big'
-                      onClick={reading ? pauseReading : startReading}
-                      icon
-                      labelPosition='left'
-                      inverted
-                      color={reading ? 'red' : 'green'}
-                      style={{ margin: 20 }}
-                    >
-                      <Icon name={reading ? 'pause' : 'play'} />
-                      {reading ? 'Pause Reading' : 'Start Reading'}
-                    </Button>
                   </>
                   :
                   <Header style={{ margin: 10, fontFamily: 'roboto' }} size='large'>
