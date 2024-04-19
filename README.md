@@ -10,6 +10,6 @@ npm run dev
 
 ```
 npm i
-node app
+npm start
 
 ```
