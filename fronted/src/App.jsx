@@ -37,7 +37,7 @@ function App() {
       
       setSpeechInProgress(true); // Set speech in progress
     } else {
-      alert("Please Speak!");
+      alert("Nothing To Resume");
       setButtonDisabled(true);
       
 // Disable the button
