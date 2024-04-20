@@ -1,5 +1,6 @@
 import React, { useRef, useState, useCallback, createRef } from "react";
 import "./App.css";
+import "./index.css";
 import Webcam from "react-webcam";
 import axios from "axios";
 import { Header, Grid, Button, Icon, Message, Loader } from "semantic-ui-react";
@@ -17,7 +18,7 @@ function App() {
   // Function to handle speech synthesis
   const speak = (text) => {
     const utterance = new SpeechSynthesisUtterance(text);
-    (utterance.lang = "en-US");
+    utterance.lang = "en-US";
     utteranceRef.current = utterance;
     speechSynthesis.cancel();
     speechSynthesis.speak(utterance);
@@ -27,20 +28,19 @@ function App() {
   // Function to handle pausing speech synthesis
   const pauseSpeech = () => {
     speechSynthesis.pause();
-    
   };
 
   // Function to handle resuming speech synthesis
   const resumeSpeech = () => {
     if (utteranceRef.current) {
       speechSynthesis.resume();
-      
+
       setSpeechInProgress(true); // Set speech in progress
     } else {
       alert("Nothing To Resume");
       setButtonDisabled(true);
-      
-// Disable the button
+
+      // Disable the button
     }
   };
 
@@ -89,17 +89,23 @@ function App() {
 
   return (
     <>
-      <center>
+    <div className="flex flex-col  hover:bg-gray-100 dark:border-gray-700 dark:bg-gray-800 dark:hover:bg-gray-700">
+      <div className="">
         <Header
-          style={{ margin: 40, fontSize: 50, fontFamily: "roboto" }}
+          style={{ fontSize: 50, fontFamily: "roboto" }}
           size="huge"
+          className="text-center"
         >
           React OCR
         </Header>
-      </center>
+      </div>
 
       <Grid divided>
-        <Grid.Column style={{ width: "50%" }} key={0}>
+        <Grid.Column
+          style={{ width: "50%" }}
+          key={0}
+          className="object-cover w-full rounded-t-lg h-96 md:h-auto md:w-48 md:rounded-none md:rounded-s-lg"
+        >
           <center>
             <Webcam
               audio={false}
@@ -144,11 +150,6 @@ function App() {
               </Button>
 
               {/* Integration of speech synthesis buttons */}
-              <div style={{ marginTop: 20 }}>
-                <Button onClick={() => speak(textOcr)}>Play</Button>
-                <Button onClick={pauseSpeech}>Pause</Button>
-                <Button onClick={resumeSpeech} disabled={isButtonDisabled}>Resume</Button>
-              </div>
             </Grid.Column>
           </center>
         </Grid.Column>
@@ -165,21 +166,29 @@ function App() {
             </Loader>
           ) : imgSrc ? (
             <>
-              <Header style={{ margin: 10, fontFamily: "roboto" }} size="large">
-                Result
-              </Header>
-              <img
-                style={{ marginLeft: 10, height: "50%" }}
-                alt="captured"
-                src={imgSrc}
-              />
-              <Message
-                size="massive"
-                color="orange"
-                header={textOcr}
-                content=""
-                style={{ margin: 15 }}
-              />
+              <div className="flex flex-col justify-between p-4 leading-normal ">
+                <Header
+                  style={{ margin: 10, fontFamily: "roboto" }}
+                  size="large"
+                  className="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"
+                >
+                  Result
+                </Header>
+                <img
+                  style={{ marginLeft: 10, height: "50%" }}
+                  alt="captured"
+                  src={imgSrc}
+                />
+                <Message
+                className="mb-3 font-normal text-gray-700 dark:text-gray-400"
+                  size="massive"
+                  color="orange"
+                  header={textOcr}
+                  content=""
+                  style={{ margin: 15 }}
+                  
+                />
+              </div>
             </>
           ) : (
             <Header style={{ margin: 10, fontFamily: "roboto" }} size="large">
@@ -188,6 +197,14 @@ function App() {
           )}
         </Grid.Column>
       </Grid>
+      <div style={{ marginTop: 20 }}>
+        <Button onClick={() => speak(textOcr)}>Play</Button>
+        <Button onClick={pauseSpeech}>Pause</Button>
+        <Button onClick={resumeSpeech} disabled={isButtonDisabled}>
+          Resume
+        </Button>
+      </div>
+      </div>
     </>
   );
 }
